@@ -35,24 +35,53 @@ abstract class AbstractAircraft
     + {abstract} shoot():List<BaseBullet>
  }
 
-
 class HeroAircraft {
-    - shootNum:int
-    - power:int
-    - direction:int
-    + HeroAircraft(int locationX, int locationY, int speedX, int speedY, int hp)
-    + forward():void
-    + shoot():List<BaseBullet>
+- instance: HeroAircraft
+- shootNum: int
+- power: int
+- direction: int
+- HeroAircraft(int locationX, int locationY, int speedX, int speedY, int hp)
++ getInstance(): HeroAircraft
++ forward(): void
++ shoot(): List<BaseBullet>
 }
-
-AbstractAircraft <|-- HeroAircraft
 
 class MobEnemy {
     + MobEnemy(int locationX, int locationY, int speedX, int speedY, int hp)
     + forward():void
     + shoot():List<BaseBullet>
 }
+
+class EliteEnemy {
+    + MobEnemy(int locationX, int locationY, int speedX, int speedY, int hp)
+    + forward():void
+    + shoot():List<BaseBullet>
+}
+
+class ElitePlusEnemy {
+    + MobEnemy(int locationX, int locationY, int speedX, int speedY, int hp)
+    + forward():void
+    + shoot():List<BaseBullet>
+}
+
+class EliteProEnemy {
+    + MobEnemy(int locationX, int locationY, int speedX, int speedY, int hp)
+    + forward():void
+    + shoot():List<BaseBullet>
+}
+
+class BossEnemy {
+    + MobEnemy(int locationX, int locationY, int speedX, int speedY, int hp)
+    + forward():void
+    + shoot():List<BaseBullet>
+}
+
+AbstractAircraft <|-- HeroAircraft
 AbstractAircraft <|-- MobEnemy
+AbstractAircraft <|-- EliteEnemy
+AbstractAircraft <|-- ElitePlusEnemy
+AbstractAircraft <|-- EliteProEnemy
+AbstractAircraft <|-- BossEnemy
 
 abstract class BaseBullet
 {
@@ -75,7 +104,39 @@ class EnemyBullet {
 BaseBullet <|-- HeroBullet
 BaseBullet <|-- EnemyBullet
 
+abstract class AbstractProp
+{
+    + forward(): void
+}
+
+class BloodProp {
+
+}
+
+class BombProp {
+
+}
+
+class BulletProp {
+
+}
+
+class BulletPlusProp {
+
+}
+
+class FreezeProp {
+
+}
+
+AbstractProp <|-- BloodProp
+AbstractProp <|-- BombProp
+AbstractProp <|-- BulletProp
+AbstractProp <|-- BulletPlusProp
+AbstractProp <|-- FreezeProp
+
 AbstractFlyingObject <|-- AbstractAircraft
 AbstractFlyingObject <|-- BaseBullet
+AbstractFlyingObject <|-- AbstractProp
 
 @enduml
