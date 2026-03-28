@@ -29,4 +29,9 @@ public class AbstractProp extends AbstractFlyingObject {
             vanish();
         }
     }
+
+    // 道具生效
+    public void applyEffect(AbstractAircraft  aircraft){
+
+    }
 }

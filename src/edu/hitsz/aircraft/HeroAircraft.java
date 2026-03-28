@@ -66,4 +66,11 @@ public class HeroAircraft extends AbstractAircraft {
         return res;
     }
 
+    // 恢复血量
+    public void recoverHp(int recovery_Amount){
+        hp += recovery_Amount;
+        if(hp >= maxHp){
+            hp = maxHp;
+        }
+    }
 }
