@@ -5,6 +5,9 @@ import edu.hitsz.bullet.BaseBullet;
 import edu.hitsz.bullet.EnemyBullet;
 import edu.hitsz.factory.PropFactory;
 import edu.hitsz.prop.AbstractProp;
+import edu.hitsz.strategy.ShootStrategy;
+import edu.hitsz.strategy.SpreadShoot;
+import edu.hitsz.strategy.StraightShoot;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -24,9 +27,12 @@ public class BossEnemy extends AbstractAircraft {
     private int direction = 1;
     // 每次掉落的装备数量
     private int propNum = 10;
+    // 射击策略
+    private ShootStrategy shootStrategy;
 
     public BossEnemy(int locationX, int locationY, int speedX, int speedY, int hp) {
         super(locationX, locationY, speedX, speedY, hp);
+        shootStrategy = new SpreadShoot(shootNum, power);
     }
 
     @Override
@@ -40,18 +46,6 @@ public class BossEnemy extends AbstractAircraft {
 
     @Override
     public List<BaseBullet> shoot() {
-        List<BaseBullet> res = new LinkedList<>();
-        int x = this.getLocationX();
-        int y = this.getLocationY() + direction*2;
-        int speedX = 0;
-        int speedY = this.getSpeedY() + direction*5;
-        BaseBullet bullet;
-        for(int i=0; i<shootNum; i++){
-            // 子弹发射位置相对飞机位置向前偏移
-            // 多个子弹横向分散
-            bullet = new EnemyBullet(x + (i*2 - shootNum + 1)*10, y, speedX, speedY, power);
-            res.add(bullet);
-        }
-        return res;
+        return shootStrategy.shoot(this.locationX, this.locationY, speedY, direction);
     }
 }

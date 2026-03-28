@@ -8,7 +8,7 @@ import edu.hitsz.application.Main;
 
 public class BombProp extends AbstractProp{
 
-    public BombProp(int locationX, int locationY, int speedX, int speedY){
+    public BombProp(int locationX, int locationY, int speedX, int speedY) {
         super(locationX, locationY, speedX, speedY);
     }
 
