@@ -238,15 +238,15 @@ public class Game extends JPanel {
                         int locationX = enemyAircraft.getLocationX();
                         int locationY = enemyAircraft.getLocationY();
                         double seed = Math.random();
-                        String type = "";
-                        if (seed <= 0.5) {
+                        String type;
+                        if (seed <= 0.4) {
                             type = "blood";
-                        } else if(seed <= 0.7){
-                            type = "bomb";
-                        } else if(seed <= 0.8){
+                        } else if(seed <= 0.65){
                             type = "bullet";
-                        } else if(seed <= 0.9){
+                        } else if(seed <= 0.85){
                             type = "bullet_plus";
+                        } else if(seed <= 0.95){
+                            type = "bomb";
                         } else {
                             type = "freeze";
                         }
@@ -312,7 +312,7 @@ public class Game extends JPanel {
             gameOverFlag = true;
             System.out.println("Game Over!");
         }
-    };
+    }
 
     //***********************
     //      Paint 各部分

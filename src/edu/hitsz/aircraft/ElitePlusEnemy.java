@@ -2,12 +2,9 @@ package edu.hitsz.aircraft;
 
 import edu.hitsz.application.Main;
 import edu.hitsz.bullet.BaseBullet;
-import edu.hitsz.bullet.EnemyBullet;
 import edu.hitsz.strategy.ShootStrategy;
-import edu.hitsz.strategy.SpreadShoot;
 import edu.hitsz.strategy.StraightShoot;
 
-import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -28,7 +25,7 @@ public class ElitePlusEnemy extends AbstractAircraft {
 
     public ElitePlusEnemy(int locationX, int locationY, int speedX, int speedY, int hp) {
         super(locationX, locationY, speedX, speedY, hp);
-        shootStrategy = new StraightShoot(shootNum, power);
+        shootStrategy = new StraightShoot(shootNum, power, direction);
     }
 
     @Override
@@ -42,6 +39,6 @@ public class ElitePlusEnemy extends AbstractAircraft {
 
     @Override
     public List<BaseBullet> shoot() {
-        return shootStrategy.shoot(this.locationX, this.locationY, speedY, direction);
+        return shootStrategy.shoot(this);
     }
 }

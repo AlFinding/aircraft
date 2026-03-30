@@ -2,11 +2,9 @@ package edu.hitsz.aircraft;
 
 import edu.hitsz.application.Main;
 import edu.hitsz.bullet.BaseBullet;
-import edu.hitsz.bullet.EnemyBullet;
 import edu.hitsz.strategy.ShootStrategy;
 import edu.hitsz.strategy.SpreadShoot;
 
-import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -27,7 +25,7 @@ public class EliteProEnemy extends AbstractAircraft {
 
     public EliteProEnemy(int locationX, int locationY, int speedX, int speedY, int hp) {
         super(locationX, locationY, speedX, speedY, hp);
-        shootStrategy = new SpreadShoot(shootNum, power);
+        shootStrategy = new SpreadShoot(shootNum, power, direction);
     }
 
     @Override
@@ -41,6 +39,6 @@ public class EliteProEnemy extends AbstractAircraft {
 
     @Override
     public List<BaseBullet> shoot() {
-        return shootStrategy.shoot(this.locationX, this.locationY, speedY, direction);
+        return shootStrategy.shoot(this);
     }
 }

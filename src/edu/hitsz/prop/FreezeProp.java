@@ -1,7 +1,5 @@
 package edu.hitsz.prop;
 
-import edu.hitsz.application.Main;
-
 /**
  * 冰冻道具
  */

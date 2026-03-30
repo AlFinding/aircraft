@@ -2,7 +2,6 @@ package edu.hitsz.prop;
 
 import edu.hitsz.aircraft.AbstractAircraft;
 import edu.hitsz.aircraft.HeroAircraft;
-import edu.hitsz.application.Main;
 
 /**
  * 给英雄机回血的道具
