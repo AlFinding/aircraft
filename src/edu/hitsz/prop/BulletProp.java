@@ -3,6 +3,7 @@ package edu.hitsz.prop;
 import edu.hitsz.aircraft.AbstractAircraft;
 import edu.hitsz.aircraft.HeroAircraft;
 import edu.hitsz.strategy.ShootStrategy;
+import edu.hitsz.strategy.SpreadShoot;
 import edu.hitsz.strategy.StraightShoot;
 
 /**
@@ -16,7 +17,7 @@ public class BulletProp extends AbstractProp{
     }
     public void applyEffect(AbstractAircraft aircraft){
         if(aircraft instanceof HeroAircraft) {
-            ShootStrategy newStrategy = new StraightShoot(3, 50, -1);
+            ShootStrategy newStrategy = new SpreadShoot(3, 50, -1);
             ((HeroAircraft)aircraft).getStrategy(newStrategy);
         }
     }

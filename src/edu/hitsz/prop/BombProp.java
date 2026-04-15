@@ -1,5 +1,8 @@
 package edu.hitsz.prop;
 
+import edu.hitsz.aircraft.AbstractAircraft;
+import edu.hitsz.aircraft.HeroAircraft;
+
 /**
  * 炸弹道具
  */
@@ -10,4 +13,8 @@ public class BombProp extends AbstractProp{
         super(locationX, locationY, speedX, speedY);
     }
 
+    @Override
+    public void applyEffect(AbstractAircraft aircraft){
+        System.out.println("BombProp apply effect!!!");
+    }
 }

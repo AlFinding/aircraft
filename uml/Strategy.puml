@@ -1,0 +1,46 @@
+@startuml
+'https://plantuml.com/class-diagram
+
+interface ShootStrategy {
+    shoot(AbstractAircraft aircraft): List<BaseBullet>
+}
+
+class aircraft {
+    - shootStrategy: ShootStrategy
+    + getStrategy(ShootStrategy newStrategy): void
+    + shoot(): List<BaseBullet>
+}
+
+class StraightShoot {
+    - shootNum: int
+    - power: int
+    - direction: int
+    + StraightShoot(int shootNum, int power, int direction)
+    + shoot(AbstractAircraft aircraft): List<BaseBullet>
+}
+
+class SpreadShoot {
+    - shootNum: int
+    - power: int
+    - direction: int
+    - speedXMax: int
+    + SpreadShoot(int shootNum, int power, int direction)
+    + shoot(AbstractAircraft aircraft): List<BaseBullet>
+}
+
+class RingShoot {
+    - shootNum: int
+    - power: int
+    - direction: int
+    - bulletSpeed: int
+    + RingShoot(int shootNum, int power, int direction)
+    + shoot(AbstractAircraft aircraft): List<BaseBullet>
+}
+
+aircraft o--> ShootStrategy
+ShootStrategy <|.. StraightShoot
+ShootStrategy <|.. SpreadShoot
+ShootStrategy <|.. RingShoot
+
+
+@enduml
