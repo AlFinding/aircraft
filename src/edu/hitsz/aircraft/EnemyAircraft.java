@@ -2,30 +2,23 @@ package edu.hitsz.aircraft;
 
 import edu.hitsz.application.Main;
 import edu.hitsz.bullet.BaseBullet;
+import edu.hitsz.prop.AbstractProp;
 import edu.hitsz.strategy.ShootStrategy;
 import edu.hitsz.strategy.SpreadShoot;
 
 import java.util.List;
 
 /**
- * 精英pro敌机
- * 可射击、掉落道具
+ * 所有种类飞机的抽象父类
+ * @author hitsz
  */
-
-public class EliteProEnemy extends AbstractAircraft {
-
-    // 每次射击发射子弹数量
-    private int shootNum = 3;
-    // 子弹威力
-    private int power = 7;
-    // 子弹射击方向 (向上发射：-1，向下发射：1)
-    private int direction = 1;
+public abstract class EnemyAircraft extends AbstractAircraft {
     // 射击策略
-    private ShootStrategy shootStrategy;
+    private final ShootStrategy shootStrategy;
 
-    public EliteProEnemy(int locationX, int locationY, int speedX, int speedY, int hp) {
+    public EnemyAircraft(int locationX, int locationY, int speedX, int speedY, int hp, ShootStrategy strategy) {
         super(locationX, locationY, speedX, speedY, hp);
-        shootStrategy = new SpreadShoot(shootNum, power, direction);
+        this.shootStrategy =  strategy;
     }
 
     @Override
@@ -37,8 +30,15 @@ public class EliteProEnemy extends AbstractAircraft {
         }
     }
 
-    @Override
+    // 掉落道具
+    public AbstractProp dropProp() {
+        return null;
+    }
+
+    // 飞机射击方法
     public List<BaseBullet> shoot() {
         return shootStrategy.shoot(this);
     }
 }
+
+

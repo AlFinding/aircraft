@@ -7,12 +7,10 @@ class HeroAircraft {
 - power: int
 - direction: int
 - HeroAircraft(int locationX, int locationY, int speedX, int speedY, int hp)
++ getInstance(): HeroAircraft
 + forward(): void
 + shoot(): List<BaseBullet>
-+ getInstance(): HeroAircraft
+
 }
 
-'HeroAircraft <-- Game
-'class Game {
-'}
 @enduml

@@ -32,7 +32,6 @@ public abstract class AbstractAircraft extends AbstractFlyingObject {
         return hp;
     }
 
-
     /**
      * 飞机射击方法
      * @return

@@ -17,15 +17,14 @@ public class HeroAircraft extends AbstractAircraft {
     // 每次射击发射子弹数量
     private int shootNum = 1;
     // 子弹威力
-    private int power = 20;
+    private int power = 30;
     // 子弹射击方向 (向上发射：-1，向下发射：1)
     private int direction = -1;
     // 唯一英雄机实例
     private static volatile HeroAircraft instance = null;
     // 射击策略
     private ShootStrategy shootStrategy;
-    private int resetStrategyCnt = 0;
-    private int resetStrategy = 10;
+
     // 创建实例函数私有
     private HeroAircraft(int locationX, int locationY, int speedX, int speedY, int hp) {
         super(locationX, locationY, speedX, speedY, hp);
@@ -38,7 +37,6 @@ public class HeroAircraft extends AbstractAircraft {
             instance = getInstance();
         }
         instance.shootStrategy = newStrategy;
-        resetStrategyCnt = 0;
     }
 
     // 创建唯一实例函数
@@ -66,12 +64,6 @@ public class HeroAircraft extends AbstractAircraft {
       @return 射击出的子弹List
      */
     public List<BaseBullet> shoot() {
-        if(resetStrategyCnt++ >= resetStrategy){
-            // 一定时间后恢复
-            resetStrategyCnt = 0;
-            shootStrategy = new StraightShoot(shootNum, power, direction);
-            instance.getStrategy(shootStrategy);
-        }
         return shootStrategy.shoot(instance);
     }
 
