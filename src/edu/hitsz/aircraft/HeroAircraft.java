@@ -30,14 +30,6 @@ public class HeroAircraft extends AbstractAircraft {
         super(locationX, locationY, speedX, speedY, hp);
         shootStrategy = new StraightShoot(shootNum, power, direction);
     }
-    // 获取新的射击策略
-    public void getStrategy(ShootStrategy newStrategy) {
-        if (instance == null) {
-            // 还没创建 → 先创建再设置
-            instance = getInstance();
-        }
-        instance.shootStrategy = newStrategy;
-    }
 
     // 创建唯一实例函数
     public static HeroAircraft getInstance(){
@@ -51,6 +43,15 @@ public class HeroAircraft extends AbstractAircraft {
             }
         }
         return instance;
+    }
+
+    // 获取新的射击策略
+    public void getStrategy(ShootStrategy newStrategy) {
+        if (instance == null) {
+            // 还没创建 → 先创建再设置
+            instance = getInstance();
+        }
+        instance.shootStrategy = newStrategy;
     }
 
     @Override

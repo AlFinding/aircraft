@@ -6,6 +6,7 @@ import edu.hitsz.prop.AbstractProp;
 import edu.hitsz.strategy.ShootStrategy;
 import edu.hitsz.strategy.SpreadShoot;
 
+import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -31,7 +32,7 @@ public abstract class EnemyAircraft extends AbstractAircraft {
     }
 
     // 掉落道具
-    public AbstractProp dropProp() {
+    public LinkedList<AbstractProp> dropProp() {
         return null;
     }
 

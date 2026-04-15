@@ -1,0 +1,54 @@
+@startuml
+'https://plantuml.com/class-diagram
+
+abstract class AbstractProp
+{
+    + AbstractProp(int locationX, int locationY,
+     int speedX, int speedY)
+    + forward(): void
+    + applyEffect(AbstractAircraft aircraft)： void
+}
+
+class BloodProp {
+    - maxHpRecoveryAmount
+    + BloodProp(int locationX, int locationY,
+     int speedX, int speedY)
+    + applyEffect(AbstractAircraft aircraft)： void
+}
+
+class BombProp {
+    + BulletPlusProp(int locationX, int locationY,
+     int speedX, int speedY)
+    + applyEffect(AbstractAircraft aircraft)： void
+}
+
+class BulletProp {
+    + BulletProp(int locationX, int locationY,
+     int speedX, int speedY)
+    + applyEffect(AbstractAircraft aircraft)： void
+}
+
+class BulletPlusProp {
+    + BulletPlusProp(int locationX, int locationY,
+     int speedX, int speedY)
+    + applyEffect(AbstractAircraft aircraft)： void
+}
+
+class FreezeProp {
+    + FreezeProp(int locationX, int locationY,
+     int speedX, int speedY)
+}
+
+class PropFactory {
+    + createProp(String type, int locationX, int locationY,
+    int speedX, int speedY): AbstractProp
+}
+
+AbstractProp <.. PropFactory
+AbstractProp <|-- BloodProp
+AbstractProp <|-- BombProp
+AbstractProp <|-- BulletProp
+AbstractProp <|-- BulletPlusProp
+AbstractProp <|-- FreezeProp
+
+@enduml

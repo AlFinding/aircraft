@@ -1,0 +1,44 @@
+@startuml
+'https://plantuml.com/class-diagram
+
+abstract EnemyAircraft {
+    - shootStrategy: ShootStrategy
+    + EnemyAircraft(int locationX, int locationY, int speedX,
+     int speedY, int hp, ShootStrategy strategy)
+    + forward(): void
+    + dropProp(): AbstractProp
+    + shoot(): List<BaseBullet>
+}
+
+interface EnemyFactory {
+    + createEnemy(): EnemyAircraft
+}
+
+class MobEnemyFactory {
+    + createEnemy(): MobEnemyFactory
+}
+
+class EliteEnemyFactory {
+    + createEnemy(): EliteEnemyFactory
+}
+
+class ElitePlusEnemyFactory {
+    + createEnemy(): ElitePlusEnemyFactory
+}
+
+class EliteProEnemyFactory {
+    + createEnemy(): EliteProEnemyFactory
+}
+
+class BossEnemyFactory {
+    + createEnemy(): BossEnemyFactory
+}
+
+EnemyAircraft <.. EnemyFactory
+EnemyFactory <|.. MobEnemyFactory
+EnemyFactory <|.. EliteEnemyFactory
+EnemyFactory <|.. ElitePlusEnemyFactory
+EnemyFactory <|.. EliteProEnemyFactory
+EnemyFactory <|.. BossEnemyFactory
+
+@enduml

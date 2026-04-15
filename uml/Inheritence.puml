@@ -53,7 +53,7 @@ abstract EnemyAircraft {
     + EnemyAircraft(int locationX, int locationY, int speedX,
      int speedY, int hp, ShootStrategy strategy)
     + forward(): void
-    + dropProp(): AbstractProp
+    + dropProp(): LinkedList<AbstractProp>
     + shoot(): List<BaseBullet>
 }
 
@@ -75,13 +75,13 @@ class ElitePlusEnemyAircraft {
 class EliteProEnemyAircraft {
     + EliteProEnemyAircraft(int locationX, int locationY, int speedX,
      int speedY, int power, ShootStrategy strategy)
-    + dropProp(): AbstractProp
+    + dropProp(): LinkedList<AbstractProp>
 }
 
 class BossEnemyAircraft {
     + BossEnemyAircraft(int locationX, int locationY, int speedX,
      int speedY, int power, ShootStrategy strategy)
-    + dropProp(): AbstractProp
+    + dropProp(): LinkedList<AbstractProp>
 }
 
 AbstractAircraft <|-- HeroAircraft
@@ -92,37 +92,6 @@ EnemyAircraft <|-- EliteEnemyAircraft
 EnemyAircraft <|-- ElitePlusEnemyAircraft
 EnemyAircraft <|-- EliteProEnemyAircraft
 EnemyAircraft <|-- BossEnemyAircraft
-
-interface EnemyFactory {
-    + createEnemy(): EnemyAircraft
-}
-
-class MobEnemyFactory {
-    + createEnemy(): MobEnemyFactory
-}
-
-class EliteEnemyFactory {
-    + createEnemy(): EliteEnemyFactory
-}
-
-class ElitePlusEnemyFactory {
-    + createEnemy(): ElitePlusEnemyFactory
-}
-
-class EliteProEnemyFactory {
-    + createEnemy(): EliteProEnemyFactory
-}
-
-class BossEnemyFactory {
-    + createEnemy(): BossEnemyFactory
-}
-
-EnemyAircraft <.. EnemyFactory
-EnemyFactory <|.. MobEnemyFactory
-EnemyFactory <|.. EliteEnemyFactory
-EnemyFactory <|.. ElitePlusEnemyFactory
-EnemyFactory <|.. EliteProEnemyFactory
-EnemyFactory <|.. BossEnemyFactory
 
 
 abstract class BaseBullet
@@ -183,14 +152,9 @@ class BulletPlusProp {
 class FreezeProp {
     + FreezeProp(int locationX, int locationY,
      int speedX, int speedY)
+    + applyEffect(AbstractAircraft aircraft)
 }
 
-class PropFactory {
-    + createProp(String type, int locationX, int locationY,
-    int speedX, int speedY): AbstractProp
-}
-
-AbstractProp <.. PropFactory
 AbstractProp <|-- BloodProp
 AbstractProp <|-- BombProp
 AbstractProp <|-- BulletProp

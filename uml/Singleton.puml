@@ -6,11 +6,13 @@ class HeroAircraft {
 - shootNum: int
 - power: int
 - direction: int
+- shootStrategy: ShootStrategy
 - HeroAircraft(int locationX, int locationY, int speedX, int speedY, int hp)
 + getInstance(): HeroAircraft
++ getStrategy(ShootStrategy newStrategy): void
 + forward(): void
 + shoot(): List<BaseBullet>
-
++ recoverHp(int recovery_Amount): void
 }
 
 @enduml

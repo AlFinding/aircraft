@@ -41,6 +41,13 @@ public class Game extends JPanel {
     private final EliteProEnemyFactory eliteProEnemyFactory;
     private final BossEnemyFactory bossEnemyFactory;
 
+    //出现Boss敌机的分数阈值
+    private final int scoreLimit = 50;
+
+    //Boss敌机的最大数量
+    private int BossNum = 0;
+    private final int BossNumMax = 1;
+
     //屏幕中出现的敌机最大数量
     private final int enemyMaxNumber = 5;
 
@@ -87,7 +94,6 @@ public class Game extends JPanel {
         TimerTask task = new TimerTask() {
             @Override
             public void run() {
-                // TODO
                 enemySpawnCounter++;
                 if (enemySpawnCounter >= enemySpawnCycle) {
                     enemySpawnCounter = 0;
@@ -95,7 +101,9 @@ public class Game extends JPanel {
                     if (enemyAircrafts.size() < enemyMaxNumber) {
                         double seed = Math.random();
                         EnemyFactory factory = getEnemyFactory(seed);
-                        enemyAircrafts.add(factory.createEnemy());
+                        if(factory != null) {
+                            enemyAircrafts.add(factory.createEnemy());
+                        }
                     }
                 }
 
@@ -141,7 +149,13 @@ public class Game extends JPanel {
             factory = eliteProEnemyFactory;
         } else {
             // BOSS敌机
-            factory = bossEnemyFactory;
+            // 要分数大于阈值才生成boss敌机
+            if(score >= scoreLimit && BossNum < BossNumMax) {
+                factory = bossEnemyFactory;
+                BossNum += 1;
+            } else {
+                factory = mobEnemyFactory;
+            }
         }
         return factory;
     }
@@ -216,9 +230,13 @@ public class Game extends JPanel {
                     enemyAircraft.decreaseHp(bullet.getPower());
                     bullet.vanish();
                     if (enemyAircraft.notValid()) {
-                        AbstractProp droppedProp = enemyAircraft.dropProp();
-                        if (droppedProp != null) {
-                            props.add(droppedProp);
+                        if(enemyAircraft instanceof BossEnemyAircraft){
+                            BossNum -= 1;
+                            score += 100;
+                        }
+                        LinkedList<AbstractProp> droppedProps = enemyAircraft.dropProp();
+                        if (droppedProps != null) {
+                            props.addAll(droppedProps);
                         }
                         score += 10;
                     }
