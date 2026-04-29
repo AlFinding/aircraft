@@ -3,12 +3,18 @@ package edu.hitsz.application;
 import edu.hitsz.aircraft.*;
 import edu.hitsz.bullet.BaseBullet;
 import edu.hitsz.basic.AbstractFlyingObject;
+import edu.hitsz.dao.RankingListDaoImpl;
+import edu.hitsz.dao.RankingRecord;
 import edu.hitsz.factory.*;
 import edu.hitsz.prop.AbstractProp;
 
 import javax.swing.*;
+import javax.swing.event.TableModelListener;
+import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.List;
 import java.util.Timer;
@@ -41,12 +47,21 @@ public class Game extends JPanel {
     private final EliteProEnemyFactory eliteProEnemyFactory;
     private final BossEnemyFactory bossEnemyFactory;
 
+    // 排行榜数据Dao
+    private RankingListDaoImpl rankingListDao;
+    // Tablemodel用于实时接收更改操作数据
+    private RankingModel model;
+
     //出现Boss敌机的分数阈值
     private final int scoreLimit = 50;
 
     //Boss敌机的最大数量
-    private int BossNum = 0;
-    private final int BossNumMax = 1;
+    private int bossNum = 0;
+    private final int bossNumMax = 1;
+    private static Boolean bossBgmStartFlag = false;
+
+    // bgm开启标志
+    private static Boolean bgmStartFlag = false;
 
     //屏幕中出现的敌机最大数量
     private final int enemyMaxNumber = 5;
@@ -78,35 +93,34 @@ public class Game extends JPanel {
         eliteProEnemyFactory = new EliteProEnemyFactory();
         bossEnemyFactory = new BossEnemyFactory();
 
+        rankingListDao = new RankingListDaoImpl("easy");
+        // 从Dao获取数据，初始化model
+        String[] columnName = rankingListDao.getColumnName();
+        String[][]tableData = rankingListDao.showRankingList();
+        model = new RankingModel(tableData, columnName);
+
         //启动英雄机鼠标监听
         new HeroController(this, heroAircraft);
 
         this.timer = new Timer("game-action-timer", true);
-
     }
 
     /**
      * 游戏启动入口，执行游戏逻辑
      */
     public void action() {
-
+        // 开启背景音乐
+        if(bgmStartFlag == false) {
+            MusicManager.playBackgroundMusic("./src/videos/bgm.wav");
+            bgmStartFlag = true;
+        }
         // 定时任务：绘制、对象产生、碰撞判定、及结束判定
         TimerTask task = new TimerTask() {
             @Override
             public void run() {
-                enemySpawnCounter++;
-                if (enemySpawnCounter >= enemySpawnCycle) {
-                    enemySpawnCounter = 0;
 
-                    if (enemyAircrafts.size() < enemyMaxNumber) {
-                        double seed = Math.random();
-                        EnemyFactory factory = getEnemyFactory(seed);
-                        if(factory != null) {
-                            enemyAircrafts.add(factory.createEnemy());
-                        }
-                    }
-                }
-
+                // 产生敌机
+                getEnemyAction();
                 // 飞机发射子弹
                 shootAction();
                 // 子弹移动
@@ -150,14 +164,41 @@ public class Game extends JPanel {
         } else {
             // BOSS敌机
             // 要分数大于阈值才生成boss敌机
-            if(score >= scoreLimit && BossNum < BossNumMax) {
+            if(score >= scoreLimit && bossNum < bossNumMax) {
                 factory = bossEnemyFactory;
-                BossNum += 1;
+                bossNum += 1;
             } else {
                 factory = mobEnemyFactory;
             }
         }
         return factory;
+    }
+
+    private void getEnemyAction(){
+        // 周期性随机产生敌机
+        enemySpawnCounter++;
+        if (enemySpawnCounter >= enemySpawnCycle) {
+            enemySpawnCounter = 0;
+            if (enemyAircrafts.size() < enemyMaxNumber) {
+                double seed = Math.random();
+                EnemyFactory factory = getEnemyFactory(seed);
+                if(factory != null) {
+                    enemyAircrafts.add(factory.createEnemy());
+                }
+            }
+        }
+        // 产生boss音效
+        System.out.println(bossNum);
+
+        if(bossNum >= 1 && bossBgmStartFlag == false) {
+            MusicManager.stopMusic("./src/videos/bgm.wav");
+            MusicManager.playBackgroundMusic("./src/videos/bgm_boss.wav");
+            bossBgmStartFlag = true;
+        } else if(bossNum == 0 && bossBgmStartFlag == true){
+            MusicManager.stopMusic("./src/videos/bgm_boss.wav");
+            MusicManager.playBackgroundMusic("./src/videos/bgm.wav");
+            bossBgmStartFlag = false;
+        }
     }
 
     private void shootAction() {
@@ -172,7 +213,6 @@ public class Game extends JPanel {
             }
         }
     }
-
 
     private void bulletsPropsMoveAction() {
         for (BaseBullet bullet : heroBullets) {
@@ -192,7 +232,6 @@ public class Game extends JPanel {
         }
     }
 
-
     /**
      * 碰撞检测：
      * 1. 敌机攻击英雄
@@ -208,6 +247,8 @@ public class Game extends JPanel {
             if (heroAircraft.crash(bullet)) {
                 // 英雄机撞击到敌机子弹
                 // 英雄机损失一定生命值
+                // 播放子弹击中的音效
+                MusicManager.playSoundEffect("./src/videos/bullet_hit.wav");
                 heroAircraft.decreaseHp(bullet.getPower());
                 bullet.vanish();
             }
@@ -227,11 +268,13 @@ public class Game extends JPanel {
                 if (enemyAircraft.crash(bullet)) {
                     // 敌机撞击到英雄机子弹
                     // 敌机损失一定生命值
+                    // 播放受击音效
+                    MusicManager.playSoundEffect("./src/videos/bullet_hit.wav");
                     enemyAircraft.decreaseHp(bullet.getPower());
                     bullet.vanish();
                     if (enemyAircraft.notValid()) {
                         if(enemyAircraft instanceof BossEnemyAircraft){
-                            BossNum -= 1;
+                            bossNum -= 1;
                             score += 100;
                         }
                         LinkedList<AbstractProp> droppedProps = enemyAircraft.dropProp();
@@ -249,27 +292,25 @@ public class Game extends JPanel {
             }
         }
 
-        // 英雄机被地方子弹击中
-        for (BaseBullet bullet : enemyBullets) {
-            if (bullet.notValid()) {
-                continue;
-            }
-            if (heroAircraft.crash(bullet)) {
-                // 英雄机撞击到敌机子弹
-                // 英雄机损失一定生命值
-                heroAircraft.decreaseHp(bullet.getPower());
-                bullet.vanish();
-            }
-        }
-
         // 我方获得道具，道具生效
         for (AbstractProp prop : props) {
             if (prop.notValid()) {
                 continue;
             }
             if (heroAircraft.crash(prop)) {
-                prop.applyEffect(heroAircraft);
-                prop.vanish();
+                // 播放获得道具的音效
+                MusicManager.playSoundEffect("./src/videos/get_supply.wav");
+                Runnable propRun = () -> {
+                    try {
+                        prop.applyEffect(heroAircraft);
+                        prop.vanish();
+                        Thread.sleep(3000);
+                        prop.effectExpire(heroAircraft);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                };
+                new Thread(propRun).start();
             }
         }
 
@@ -294,10 +335,47 @@ public class Game extends JPanel {
     private void checkResultAction(){
         // 游戏结束检查英雄机是否存活
         if (heroAircraft.getHp() <= 0) {
+            // 停止播放所有音乐
+            MusicManager.stopAllMusic();
+            // 播放游戏结束的音效
+            MusicManager.playSoundEffect("./src/videos/game_over.wav");
             timer.cancel(); // 取消定时器并终止所有调度任务
             gameOverFlag = true;
             System.out.println("Game Over!");
+
+            // 提示输入用户名保存记录
+            String message = "游戏结束，你的分数是：" + score + "\n请输入用户名以保存记录:";
+            String playerName = JOptionPane.showInputDialog(this, message);
+            if(playerName != null){
+                String difficulty = "Easy";
+
+                // 获取时间
+                LocalDateTime now = LocalDateTime.now();
+                DateTimeFormatter fmt = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+                String timeStr = now.format(fmt);
+
+                // 新增记录
+                model.addRow(new String[]{"",playerName,Integer.toString(score), timeStr});
+                model.sort();
+            }
+
+            // 展示排行榜窗口
+            RankingList rankingList = new RankingList(model);
+            Main.cardPanel.add(rankingList.getMainPanel());
+            Main.cardLayout.last(Main.cardPanel);
         }
+    }
+
+    // 推出前保存数据
+    public void saveBeforeExit() {
+        // 保存表格、写文件
+        String[][] newList = new String[model.getRowCount()][model.getColumnCount()];
+        for (int i = 0; i < model.getRowCount(); i++) {
+            for(int j = 0; j < model.getColumnCount(); j++){
+                newList[i][j] = model.getValueAt(i, j).toString();
+            }
+        }
+        rankingListDao.updateRankingList(newList);
     }
 
     //***********************
@@ -360,3 +438,46 @@ public class Game extends JPanel {
     }
 
 }
+
+// 自定义的model便于动态维护每一局的排行榜数据
+class RankingModel extends DefaultTableModel {
+
+    String[] columnName;
+
+    RankingModel(String[][] tableData,  String[] columnName){
+        super(tableData,columnName);
+        this.columnName = columnName;
+    }
+
+    public void sort(){
+        // 把所有行取出来
+        List<String[]> rows = new ArrayList<>();
+        for (int i = 0; i < this.getRowCount(); i++) {
+            String[] newRow = new String[columnName.length];
+            for(int j = 0; j < columnName.length; j++){
+                newRow[j] = this.getValueAt(i, j).toString();
+            }
+            rows.add(newRow);
+        }
+
+        // 按成绩排序（数字升序）
+        final int scoreCol = 2;
+        Collections.sort(rows, new Comparator<String[]>() {
+            @Override
+            public int compare(String[] o1, String[] o2) {
+                int s1 = Integer.parseInt(o1[scoreCol]);
+                int s2 = Integer.parseInt(o2[scoreCol]);
+                return Integer.compare(s2, s1);  // 升序
+            }
+        });
+
+        // 清空原来的表格
+        this.setRowCount(0);
+        // 把排好序的行加回去
+        final int rankCol = 0;
+        for (int i = 0; i < rows.size(); i++) {
+            rows.get(i)[rankCol] = Integer.toString(i+1);
+            this.addRow(rows.get(i));
+        }
+    }
+};

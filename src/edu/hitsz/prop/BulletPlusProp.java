@@ -23,4 +23,11 @@ public class BulletPlusProp extends AbstractProp{
             ((HeroAircraft)aircraft).getStrategy(newStrategy);
         }
     }
+
+    @Override
+    public void effectExpire(AbstractAircraft aircraft){
+        if(aircraft instanceof HeroAircraft) {
+            ((HeroAircraft)aircraft).getStrategy(null);
+        }
+    }
 }

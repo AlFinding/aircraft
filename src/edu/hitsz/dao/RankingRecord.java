@@ -2,12 +2,14 @@ package edu.hitsz.dao;
 
 public class RankingRecord {
     // 榜单内容包含名次、玩家名、得分、难度、记录时间
+    private int ranking;
     private int score;
-    private int recordTime;
+    private String recordTime;
     private String difficulty;
     private String playerName;
 
-    public RankingRecord(int ranking, int score, int recordTime, String difficulty, String playerName) {
+    public RankingRecord(int ranking, int score, String playerName, String recordTime, String difficulty) {
+        this.ranking = ranking;
         this.score = score;
         this.recordTime = recordTime;
         this.difficulty = difficulty;
@@ -22,11 +24,11 @@ public class RankingRecord {
         this.score = score;
     }
 
-    public int getRecordTime() {
+    public String getRecordTime() {
         return recordTime;
     }
 
-    public void setRecordTime(int recordTime) {
+    public void setRecordTime(String recordTime) {
         this.recordTime = recordTime;
     }
 

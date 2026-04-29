@@ -2,6 +2,9 @@ package edu.hitsz.application;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
 
 /**
  * 程序入口
@@ -11,6 +14,8 @@ public class Main {
 
     public static final int WINDOW_WIDTH = 512;
     public static final int WINDOW_HEIGHT = 768;
+    static final CardLayout cardLayout = new CardLayout(0,0);
+    static final JPanel cardPanel = new JPanel(cardLayout);
 
     public static void main(String[] args) {
 
@@ -21,14 +26,35 @@ public class Main {
         JFrame frame = new JFrame("Aircraft War");
         frame.setSize(WINDOW_WIDTH, WINDOW_HEIGHT);
         frame.setResizable(false);
-        //设置窗口的大小和位置,居中放置
+        // 设置窗口的大小和位置,居中放置
         frame.setBounds(((int) screenSize.getWidth() - WINDOW_WIDTH) / 2, 0,
                 WINDOW_WIDTH, WINDOW_HEIGHT);
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        // 设置默认不自动关闭
+        frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 
-        Game game = new Game();
-        frame.add(game);
+        frame.add(cardPanel);
+        DifficultySelection diffSel = new DifficultySelection();
+        cardPanel.add(diffSel.getMainPanel());
         frame.setVisible(true);
-        game.action();
+
+        // 添加监听
+        frame.addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent e) {
+                int choice = JOptionPane.showConfirmDialog(
+                        frame,
+                        "确定要退出吗？数据将保存",
+                        "确认退出",
+                        JOptionPane.YES_NO_OPTION
+                );
+
+                if (choice == JOptionPane.YES_OPTION) {
+                    // 保存数据
+                    diffSel.getCurrentGame().saveBeforeExit();
+                    frame.dispose();
+                    System.exit(0);
+                }
+            }
+        });
     }
 }

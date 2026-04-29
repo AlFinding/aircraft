@@ -38,7 +38,7 @@ public class HeroAircraft extends AbstractAircraft {
                 if(instance == null){
                     instance = new HeroAircraft(Main.WINDOW_WIDTH / 2,
                             Main.WINDOW_HEIGHT - ImageManager.HERO_IMAGE.getHeight() ,
-                            0, 0, 100);
+                            0, 0, 10000);
                 }
             }
         }
@@ -50,6 +50,10 @@ public class HeroAircraft extends AbstractAircraft {
         if (instance == null) {
             // 还没创建 → 先创建再设置
             instance = getInstance();
+        }
+        // 如果传入是空则恢复默认射击策略
+        if(newStrategy == null){
+            newStrategy = new StraightShoot(shootNum, power, direction);
         }
         instance.shootStrategy = newStrategy;
     }

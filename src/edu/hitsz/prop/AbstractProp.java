@@ -32,4 +32,7 @@ public class AbstractProp extends AbstractFlyingObject {
 
     // 道具生效
     public void applyEffect(AbstractAircraft  aircraft){}
+
+    // 道具失效
+    public void effectExpire(AbstractAircraft  aircraft){}
 }
