@@ -2,57 +2,42 @@
 
 
 interface DeviceObserver {
-    +{abstract}onFireAlarm() : void
-    +{abstract}onSecurityAlarm() : void
+    + {abstract} onBomb() : void
+    + {abstract} onFreeze() : void
 }
 
-class SmartLight {
-    +onFireAlarm() : void
-    +onSecurityAlarm() : void
+class EnemyAircraft {
+    + onBomb() : void
+    + onFreeze() : void
 }
-
-class SmartDoorLock {
-    +onFireAlarm() : void
-    +onSecurityAlarm() : void
-}
-
-class SmartSprinkler {
-    +onFireAlarm() : void
-    +onSecurityAlarm() : void
-}
-
 
 abstract class AlarmSubject {
-    -devices : List<DeviceObserver>
-    +addDevice(device : DeviceObserver) : void
-    +removeDevice(device : DeviceObserver) : void
-    +{abstract}notifyDevices(): void
-    +{abstract}trigger() : void
+    - devices : List<DeviceObserver>
+    + addDevice(List<DeviceObserver>): void
+    + removeDevice(device : DeviceObserver) : void
+    + {abstract} notifyDevices(): void
+    + {abstract} trigger() : void
 }
 
-class FireAlarm {
-    +notifyDevices(): void
-    +trigger() : void
+class BombProp {
+    + applyEffect(): void
+    + notifyDevices(): void
+    + trigger() : void
 }
 
-class SecurityAlarm {
-    +notifyDevices(): void
-    +trigger() : void
+class FreezeProp {
+    + applyEffect(): void
+    + notifyDevices(): void
+    + trigger() : void
 }
 
-class SmartHomeDemo {
-}
+EnemyAircraft .up.|>  DeviceObserver
 
-SmartLight .up.|>  DeviceObserver
-SmartDoorLock .up.|> DeviceObserver
-SmartSprinkler .up.|>  DeviceObserver
-
-FireAlarm -up-|> AlarmSubject
-SecurityAlarm -up-|> AlarmSubject
+BombProp -up-|> AlarmSubject
+FreezeProp -up-|> AlarmSubject
 
 
 AlarmSubject o-right-> DeviceObserver
-SmartHomeDemo ..> AlarmSubject
-SmartHomeDemo ..> DeviceObserver
+
 
 @enduml

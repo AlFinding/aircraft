@@ -359,6 +359,7 @@ public abstract class Game extends JPanel {
     public List<EnemyAircraft> getEnemy(){
         return enemyAircrafts;
     }
+
     public List<BaseBullet> getEnemyBullet(){
         return enemyBullets;
     }
@@ -426,7 +427,6 @@ public abstract class Game extends JPanel {
         y = y + 20;
         g.drawString("LIFE: " + this.heroAircraft.getHp(), x, y);
     }
-
 }
 
 ;

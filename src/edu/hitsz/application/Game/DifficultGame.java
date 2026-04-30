@@ -90,7 +90,7 @@ public class DifficultGame extends Game {
     }
 
     @Override
-    public void paintBackground(Graphics g) {
+        public void paintBackground(Graphics g) {
         // 绘制背景,图片滚动
         g.drawImage(ImageManager.BACKGROUND_DIFFICULT_IMAGE, 0, this.backGroundTop - Main.WINDOW_HEIGHT, null);
         g.drawImage(ImageManager.BACKGROUND_DIFFICULT_IMAGE, 0, this.backGroundTop, null);

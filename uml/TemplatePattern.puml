@@ -1,31 +1,40 @@
 @startuml
 
-class BankDemo {
+abstract class Game {
+    + action() : void
+    + difficultyIncrease() : void
+    + {abstract} getEnemyRandom(double seed): EnemyAircraft
+    - getEnemyAction() : void
+    - shootAction() : void
+    - bulletsPropsMoveAction() : void
+    - aircraftsMoveAction() : void
+    - crashCheckAction() : void
+    - postProcessAction() : void
+    + repaint() : void
+    + {abstract} paintBackground(Graphics g): void
+    + checkResultAction() : void
 }
 
-abstract class BankBusiness {
-    + process() : void
-    + prepare() : void
-    + isVip() : boolean
-    + {abstract} doBusiness() : void
-    - takeNumber() : void
-    - evaluate() : void
+class EasyGame {
+     + getEnemyRandom(double seed): EnemyAircraft
+     + paintBackground(Graphics g): void
 }
 
-class DepositBusiness {
-    + doBusiness() : void
+class NormalGame {
+     + difficultyIncrease() : void
+     + getEnemyRandom(double seed): EnemyAircraft
+     + paintBackground(Graphics g): void
+
 }
 
-class WealthManagement {
-    + prepare() : void
-    + isVip() : boolean
-    + doBusiness() : void
+class DifficultGame {
+     + difficultyIncrease() : void
+     + getEnemyRandom(double seed): EnemyAircraft
+     + paintBackground(Graphics g): void
 }
 
-BankDemo ..> BankBusiness
-BankBusiness -[hidden]down-> DepositBusiness
-
-DepositBusiness -up-|> BankBusiness
-WealthManagement -up-|> BankBusiness
+EasyGame -up-|> Game
+NormalGame -up-|> Game
+DifficultGame -up-|> Game
 
 @enduml
