@@ -14,8 +14,8 @@ public class Main {
 
     public static final int WINDOW_WIDTH = 512;
     public static final int WINDOW_HEIGHT = 768;
-    static final CardLayout cardLayout = new CardLayout(0,0);
-    static final JPanel cardPanel = new JPanel(cardLayout);
+    public static final CardLayout cardLayout = new CardLayout(0,0);
+    public static final JPanel cardPanel = new JPanel(cardLayout);
 
     public static void main(String[] args) {
 

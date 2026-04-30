@@ -28,13 +28,13 @@ public class EliteProEnemyAircraft extends EnemyAircraft {
 
         double seed = Math.random();
         String type;
-        if (seed <= 0.4) {
+        if (seed <= 0.3) {
             type = "blood";
-        } else if (seed <= 0.65) {
+        } else if (seed <= 0.5) {
             type = "bullet";
-        } else if (seed <= 0.85) {
+        } else if (seed <= 0.65) {
             type = "bullet_plus";
-        } else if (seed <= 0.95) {
+        } else if (seed <= 0.8) {
             type = "bomb";
         } else {
             type = "freeze";
@@ -42,5 +42,29 @@ public class EliteProEnemyAircraft extends EnemyAircraft {
         props.add(PropFactory.createProp(type, locationX, locationY, speedX, speedY));
 
         return props;
+    }
+
+    @Override
+    public void onBomb(){
+        // 损失最大血量的一半
+        this.decreaseHp(this.maxHp/2);
+    }
+
+    @Override
+    public void onFreeze(){
+        Runnable freezeRun = () -> {
+            try {
+                int speedXBefore = this.speedX;
+                int speedYBefore = this.speedY;
+                this.speedX = speedXBefore/3;
+                this.speedY = speedYBefore/3;
+                Thread.sleep(5000);
+                this.speedX = speedXBefore;
+                this.speedY = speedYBefore;
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        };
+        new Thread(freezeRun).start();
     }
 }

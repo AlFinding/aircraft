@@ -32,11 +32,11 @@ public class BossEnemyAircraft extends EnemyAircraft {
             String type;
             if (seed <= 0.4) {
                 type = "blood";
-            } else if (seed <= 0.65) {
+            } else if (seed <= 0.5) {
                 type = "bullet";
-            } else if (seed <= 0.85) {
+            } else if (seed <= 0.7) {
                 type = "bullet_plus";
-            } else if (seed <= 0.95) {
+            } else if (seed <= 0.8) {
                 type = "bomb";
             } else {
                 type = "freeze";
@@ -47,4 +47,18 @@ public class BossEnemyAircraft extends EnemyAircraft {
 
         return props;
     }
+
+    // Boss敌机不受影响
+    @Override
+    public void onBomb(){};
+
+    // Boss敌机不受影响
+    @Override
+    public void onFreeze(){};
+
+    public void increaseHp(int increasement){
+        this.maxHp += increasement;
+        this.hp += increasement;
+    }
+
 }

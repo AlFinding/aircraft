@@ -41,4 +41,27 @@ public class ElitePlusEnemyAircraft extends EnemyAircraft {
         props.add(PropFactory.createProp(type, locationX, locationY, speedX, speedY));
         return props;
     }
+
+    @Override
+    public void onBomb(){
+        this.vanish();
+    }
+
+    @Override
+    public void onFreeze(){
+        Runnable freezeRun = () -> {
+            try {
+                int speedXBefore = this.speedX;
+                int speedYBefore = this.speedY;
+                this.speedX = 0;
+                this.speedY = 0;
+                Thread.sleep(3000);
+                this.speedX = speedXBefore;
+                this.speedY = speedYBefore;
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        };
+        new Thread(freezeRun).start();
+    }
 }

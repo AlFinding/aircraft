@@ -1,16 +1,14 @@
-package edu.hitsz.application;
+package edu.hitsz.application.Game;
 
 import edu.hitsz.aircraft.*;
+import edu.hitsz.application.*;
 import edu.hitsz.bullet.BaseBullet;
 import edu.hitsz.basic.AbstractFlyingObject;
 import edu.hitsz.dao.RankingListDaoImpl;
-import edu.hitsz.dao.RankingRecord;
 import edu.hitsz.factory.*;
 import edu.hitsz.prop.AbstractProp;
 
 import javax.swing.*;
-import javax.swing.event.TableModelListener;
-import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.time.LocalDateTime;
@@ -18,15 +16,14 @@ import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.List;
 import java.util.Timer;
-import java.util.concurrent.*;
 
 /**
  * 游戏主面板，游戏启动
  * @author hitsz
  */
-public class Game extends JPanel {
+public abstract class Game extends JPanel {
 
-    private int backGroundTop = 0;
+    protected int backGroundTop = 0;
 
     //调度器, 用于定时任务调度
     private final Timer timer;
@@ -41,46 +38,50 @@ public class Game extends JPanel {
     private final List<AbstractProp>  props;
 
     //工厂实例
-    private final MobEnemyFactory mobEnemyFactory;
-    private final EliteEnemyFactory eliteEnemyFactory;
-    private final ElitePlusEnemyFactory elitePlusEnemyFactory;
-    private final EliteProEnemyFactory eliteProEnemyFactory;
-    private final BossEnemyFactory bossEnemyFactory;
+    protected final MobEnemyFactory mobEnemyFactory;
+    protected final EliteEnemyFactory eliteEnemyFactory;
+    protected final ElitePlusEnemyFactory elitePlusEnemyFactory;
+    protected final EliteProEnemyFactory eliteProEnemyFactory;
+    protected final BossEnemyFactory bossEnemyFactory;
 
     // 排行榜数据Dao
     private RankingListDaoImpl rankingListDao;
     // Tablemodel用于实时接收更改操作数据
-    private RankingModel model;
+    public RankingModel model;
 
     //出现Boss敌机的分数阈值
-    private final int scoreLimit = 50;
+    protected int scoreLimit = 50;
 
     //Boss敌机的最大数量
-    private int bossNum = 0;
-    private final int bossNumMax = 1;
+    protected int bossNum = 0;
+    protected int bossEver = 0;
+    protected int bossNumMax = 1;
     private static Boolean bossBgmStartFlag = false;
 
     // bgm开启标志
     private static Boolean bgmStartFlag = false;
 
     //屏幕中出现的敌机最大数量
-    private final int enemyMaxNumber = 5;
+    protected int enemyMaxNumber = 5;
 
     //敌机生成周期
     protected double enemySpawnCycle  =  50;
     private int enemySpawnCounter = 0;
+
+    // 敌机属性倍率
+    protected float enemyAttributeRate = 1;
 
     //英雄机和敌机射击周期
     protected double shootCycle = 10;
     private int shootCounter = 0;
 
     //当前玩家分数
-    private int score = 0;
+    protected int score = 0;
 
     //游戏结束标志
     private boolean gameOverFlag = false;
 
-    public Game() {
+    public Game(String difficulty) {
         heroAircraft = HeroAircraft.getInstance();
         enemyAircrafts = new LinkedList<>();
         heroBullets = new LinkedList<>();
@@ -93,7 +94,7 @@ public class Game extends JPanel {
         eliteProEnemyFactory = new EliteProEnemyFactory();
         bossEnemyFactory = new BossEnemyFactory();
 
-        rankingListDao = new RankingListDaoImpl("easy");
+        rankingListDao = new RankingListDaoImpl(difficulty);
         // 从Dao获取数据，初始化model
         String[] columnName = rankingListDao.getColumnName();
         String[][]tableData = rankingListDao.showRankingList();
@@ -108,7 +109,7 @@ public class Game extends JPanel {
     /**
      * 游戏启动入口，执行游戏逻辑
      */
-    public void action() {
+    public final void action() {
         // 开启背景音乐
         if(bgmStartFlag == false) {
             MusicManager.playBackgroundMusic("./src/videos/bgm.wav");
@@ -118,61 +119,36 @@ public class Game extends JPanel {
         TimerTask task = new TimerTask() {
             @Override
             public void run() {
-
-                // 产生敌机
-                getEnemyAction();
-                // 飞机发射子弹
-                shootAction();
-                // 子弹移动
-                bulletsPropsMoveAction();
-                // 飞机移动
-                aircraftsMoveAction();
-                // 撞击检测
-                crashCheckAction();
-                // 后处理
-                postProcessAction();
-                // 重绘界面
-                repaint();
-                // 游戏结束检查
-                checkResultAction();
+            // 难度随时间变化
+            difficultyIncrease();
+            // 产生敌机
+            getEnemyAction();
+            // 飞机发射子弹
+            shootAction();
+            // 子弹移动
+            bulletsPropsMoveAction();
+            // 飞机移动
+            aircraftsMoveAction();
+            // 撞击检测
+            crashCheckAction();
+            // 后处理
+            postProcessAction();
+            // 重绘界面
+            repaint();
+            // 游戏结束检查
+            checkResultAction();
             }
         };
         // 以固定延迟时间进行执行：本次任务执行完成后，延迟 timeInterval 再执行下一次
         timer.schedule(task,0,timeInterval);
-
     }
 
     //***********************
     //      Action 各部分
     //***********************
+    public void difficultyIncrease(){}
 
-    private EnemyFactory getEnemyFactory(double seed) {
-        EnemyFactory factory;
-        // 按概率区间选择敌机
-        if (seed <= 0.5) {
-            // 普通敌机
-            factory = mobEnemyFactory;
-        } else if (seed <= 0.7) {
-            // 精英敌机
-            factory = eliteEnemyFactory;
-        } else if (seed <= 0.8) {
-            // 精英+敌机
-            factory = elitePlusEnemyFactory;
-        } else if (seed <= 0.9) {
-            // 精英Pro敌机
-            factory = eliteProEnemyFactory;
-        } else {
-            // BOSS敌机
-            // 要分数大于阈值才生成boss敌机
-            if(score >= scoreLimit && bossNum < bossNumMax) {
-                factory = bossEnemyFactory;
-                bossNum += 1;
-            } else {
-                factory = mobEnemyFactory;
-            }
-        }
-        return factory;
-    }
+    public abstract EnemyAircraft getEnemyRandom(double seed);
 
     private void getEnemyAction(){
         // 周期性随机产生敌机
@@ -181,15 +157,13 @@ public class Game extends JPanel {
             enemySpawnCounter = 0;
             if (enemyAircrafts.size() < enemyMaxNumber) {
                 double seed = Math.random();
-                EnemyFactory factory = getEnemyFactory(seed);
-                if(factory != null) {
-                    enemyAircrafts.add(factory.createEnemy());
+                EnemyAircraft enemy = getEnemyRandom(seed);
+                if(enemy != null) {
+                    enemyAircrafts.add(enemy);
                 }
             }
         }
         // 产生boss音效
-        System.out.println(bossNum);
-
         if(bossNum >= 1 && bossBgmStartFlag == false) {
             MusicManager.stopMusic("./src/videos/bgm.wav");
             MusicManager.playBackgroundMusic("./src/videos/bgm_boss.wav");
@@ -302,10 +276,10 @@ public class Game extends JPanel {
                 MusicManager.playSoundEffect("./src/videos/get_supply.wav");
                 Runnable propRun = () -> {
                     try {
-                        prop.applyEffect(heroAircraft);
+                        prop.applyEffect(this);
                         prop.vanish();
                         Thread.sleep(3000);
-                        prop.effectExpire(heroAircraft);
+                        prop.effectExpire(this);
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
@@ -378,6 +352,17 @@ public class Game extends JPanel {
         rankingListDao.updateRankingList(newList);
     }
 
+    public HeroAircraft getHero(){
+        return heroAircraft;
+    }
+
+    public List<EnemyAircraft> getEnemy(){
+        return enemyAircrafts;
+    }
+    public List<BaseBullet> getEnemyBullet(){
+        return enemyBullets;
+    }
+
     //***********************
     //      Paint 各部分
     //***********************
@@ -390,12 +375,7 @@ public class Game extends JPanel {
         super.paint(g);
 
         // 绘制背景,图片滚动
-        g.drawImage(ImageManager.BACKGROUND_IMAGE, 0, this.backGroundTop - Main.WINDOW_HEIGHT, null);
-        g.drawImage(ImageManager.BACKGROUND_IMAGE, 0, this.backGroundTop, null);
-        this.backGroundTop += 1;
-        if (this.backGroundTop == Main.WINDOW_HEIGHT) {
-            this.backGroundTop = 0;
-        }
+        paintBackground(g);
 
         // 先绘制子弹，后绘制飞机
         // 这样子弹显示在飞机的下层
@@ -412,6 +392,16 @@ public class Game extends JPanel {
         //绘制得分和生命值
         paintScoreAndLife(g);
 
+    }
+
+    public void paintBackground(Graphics g) {
+        // 绘制背景,图片滚动
+        g.drawImage(ImageManager.BACKGROUND_EASY_IMAGE, 0, this.backGroundTop - Main.WINDOW_HEIGHT, null);
+        g.drawImage(ImageManager.BACKGROUND_EASY_IMAGE, 0, this.backGroundTop, null);
+        this.backGroundTop += 1;
+        if (this.backGroundTop == Main.WINDOW_HEIGHT) {
+            this.backGroundTop = 0;
+        }
     }
 
     private void paintImageWithPositionRevised(Graphics g, List<? extends AbstractFlyingObject> objects) {
@@ -439,45 +429,4 @@ public class Game extends JPanel {
 
 }
 
-// 自定义的model便于动态维护每一局的排行榜数据
-class RankingModel extends DefaultTableModel {
-
-    String[] columnName;
-
-    RankingModel(String[][] tableData,  String[] columnName){
-        super(tableData,columnName);
-        this.columnName = columnName;
-    }
-
-    public void sort(){
-        // 把所有行取出来
-        List<String[]> rows = new ArrayList<>();
-        for (int i = 0; i < this.getRowCount(); i++) {
-            String[] newRow = new String[columnName.length];
-            for(int j = 0; j < columnName.length; j++){
-                newRow[j] = this.getValueAt(i, j).toString();
-            }
-            rows.add(newRow);
-        }
-
-        // 按成绩排序（数字升序）
-        final int scoreCol = 2;
-        Collections.sort(rows, new Comparator<String[]>() {
-            @Override
-            public int compare(String[] o1, String[] o2) {
-                int s1 = Integer.parseInt(o1[scoreCol]);
-                int s2 = Integer.parseInt(o2[scoreCol]);
-                return Integer.compare(s2, s1);  // 升序
-            }
-        });
-
-        // 清空原来的表格
-        this.setRowCount(0);
-        // 把排好序的行加回去
-        final int rankCol = 0;
-        for (int i = 0; i < rows.size(); i++) {
-            rows.get(i)[rankCol] = Integer.toString(i+1);
-            this.addRow(rows.get(i));
-        }
-    }
-};
+;

@@ -1,5 +1,10 @@
 package edu.hitsz.application;
 
+import edu.hitsz.application.Game.DifficultGame;
+import edu.hitsz.application.Game.EasyGame;
+import edu.hitsz.application.Game.Game;
+import edu.hitsz.application.Game.NormalGame;
+
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -18,7 +23,7 @@ public class DifficultySelection {
         Easy.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                currentGame = new Game();
+                currentGame = new EasyGame();
                 Main.cardPanel.add(currentGame);
                 currentGame.action();
                 Main.cardLayout.last(Main.cardPanel);
@@ -27,13 +32,19 @@ public class DifficultySelection {
         Normal.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-
+                currentGame = new NormalGame();
+                Main.cardPanel.add(currentGame);
+                currentGame.action();
+                Main.cardLayout.last(Main.cardPanel);
             }
         });
         Difficult.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-
+                currentGame = new DifficultGame();
+                Main.cardPanel.add(currentGame);
+                currentGame.action();
+                Main.cardLayout.last(Main.cardPanel);
             }
         });
     }

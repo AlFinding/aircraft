@@ -1,8 +1,9 @@
 package edu.hitsz.application;
 
+import edu.hitsz.application.Game.Game;
+import edu.hitsz.application.RankingModel;
+
 import javax.swing.*;
-import javax.swing.table.DefaultTableModel;
-import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 

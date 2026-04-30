@@ -15,4 +15,14 @@ public class MobEnemyAircraft extends EnemyAircraft {
         super(locationX, locationY, speedX, speedY, hp, strategy);
     }
 
+    @Override
+    public void onBomb(){
+        this.vanish();
+    }
+
+    @Override
+    public void onFreeze(){
+        this.speedX = 0;
+        this.speedY = 0;
+    }
 }

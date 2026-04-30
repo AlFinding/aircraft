@@ -1,6 +1,7 @@
 package edu.hitsz.aircraft;
 
 import edu.hitsz.application.Main;
+import edu.hitsz.basic.DeviceObserver;
 import edu.hitsz.bullet.BaseBullet;
 import edu.hitsz.prop.AbstractProp;
 import edu.hitsz.strategy.ShootStrategy;
@@ -13,7 +14,7 @@ import java.util.List;
  * 所有种类飞机的抽象父类
  * @author hitsz
  */
-public abstract class EnemyAircraft extends AbstractAircraft {
+public abstract class EnemyAircraft extends AbstractAircraft implements DeviceObserver {
     // 射击策略
     private final ShootStrategy shootStrategy;
 

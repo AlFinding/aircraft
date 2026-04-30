@@ -1,10 +1,9 @@
 package edu.hitsz.prop;
 
-import edu.hitsz.aircraft.AbstractAircraft;
 import edu.hitsz.aircraft.HeroAircraft;
+import edu.hitsz.application.Game.Game;
 import edu.hitsz.strategy.RingShoot;
 import edu.hitsz.strategy.ShootStrategy;
-import edu.hitsz.strategy.SpreadShoot;
 
 /**
  * 弹药道具
@@ -17,17 +16,15 @@ public class BulletPlusProp extends AbstractProp{
     }
 
     @Override
-    public void applyEffect(AbstractAircraft aircraft){
-        if(aircraft instanceof HeroAircraft) {
-            ShootStrategy newStrategy = new RingShoot(10, 50, -1);
-            ((HeroAircraft)aircraft).getStrategy(newStrategy);
-        }
+    public void applyEffect(Game game){
+        HeroAircraft hero = game.getHero();
+        ShootStrategy newStrategy = new RingShoot(10, 50, -1);
+        hero.getStrategy(newStrategy);
     }
 
     @Override
-    public void effectExpire(AbstractAircraft aircraft){
-        if(aircraft instanceof HeroAircraft) {
-            ((HeroAircraft)aircraft).getStrategy(null);
-        }
+    public void effectExpire(Game game){
+        HeroAircraft hero = game.getHero();
+        hero.getStrategy(null);
     }
 }

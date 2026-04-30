@@ -1,6 +1,6 @@
 package edu.hitsz.prop;
 
-import edu.hitsz.aircraft.AbstractAircraft;
+import edu.hitsz.application.Game.Game;
 import edu.hitsz.application.Main;
 import edu.hitsz.basic.AbstractFlyingObject;
 
@@ -31,8 +31,8 @@ public class AbstractProp extends AbstractFlyingObject {
     }
 
     // 道具生效
-    public void applyEffect(AbstractAircraft  aircraft){}
+    public void applyEffect(Game game){}
 
     // 道具失效
-    public void effectExpire(AbstractAircraft  aircraft){}
+    public void effectExpire(Game game){}
 }
