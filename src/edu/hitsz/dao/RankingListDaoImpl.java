@@ -68,15 +68,28 @@ public class RankingListDaoImpl implements RankingListDao {
         }
     }
 
-    // 新增记录
+    // 新增记录（追加写入文件）
     @Override
-    public void addRecord(RankingRecord newRecord){
-
+    public void addRecord(RankingRecord newRecord) {
+        try (BufferedWriter bw = new BufferedWriter(new FileWriter(FILE_PATH))) {
+            String line = " " + "," + newRecord.getPlayerName() + "," + newRecord.getScore() + "," + newRecord.getRecordTime();
+            bw.write(line);
+            bw.newLine();
+            System.out.println("新增记录成功！");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
-    // 删除记录
+    // 删除记录（清空排行榜文件）
     @Override
-    public void deleteRecord(){
-
+    public void deleteRecord() {
+        try (BufferedWriter bw = new BufferedWriter(new FileWriter(FILE_PATH))) {
+            // 清空文件内容
+            bw.write("");
+            System.out.println("清空记录成功！");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }

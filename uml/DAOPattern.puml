@@ -1,0 +1,44 @@
+@startuml
+
+
+interface RankingListDao {
+    + {abstract} showRankingList() : String[][]
+    + {abstract} updateRankingList(newRankingList: String[][]) : void
+    + {abstract} addRecord(newRecord: RankingRecord) : void
+    + {abstract} deleteRecord() : void
+}
+
+class RankingListDaoImpl {
+    - columnName : String[]
+    - FILE_PATH : String
+    + RankingListDaoImpl(difficulty: String)
+    + getColumnName() : String[]
+    + showRankingList() : String[][]
+    + updateRankingList(newRankingList: String[][]) : void
+    + addRecord(newRecord: RankingRecord) : void
+    + deleteRecord() : void
+}
+
+class RankingRecord {
+    - ranking: int
+    - score: int
+    - recordTime: String
+    - difficulty: String
+    - playerName: String
+    + RankingRecord(ranking: int, score: int, playerName: String, recordTime: String, difficulty: String)
+    + getScore(): int
+    + setScore(score: int): void
+    + getRecordTime(): String
+    + setRecordTime(recordTime: String): void
+    + getDifficulty(): String
+    + setDifficulty(difficulty: String): void
+    + getPlayerName(): String
+    + setPlayerName(playerName: String): void
+}
+
+RankingListDaoImpl .up.|>  RankingListDao
+
+RankingListDaoImpl -up-|> RankingRecord
+
+
+@enduml
